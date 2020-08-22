@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+
+    <h3>Plaintext</h3>
+    <textarea id="plaintxt" rows="8" cols="80"></textarea>
+    <h3>k1<br>(k1 can only be 1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23 or 25)</h3>
+    <input id="k1" type="text">
+    <h3>k2</h3>
+    <input id="k2" type="text">
+
+    <br><br>
+    <button type="button" onclick="encrypt()">Encrypt!</button>
+    <br><br>
+
+    <h3>Cipher text:</h3>
+    <h3><div id="ciphertxt"></div></h3>
+
+    <hr>
+
+    <h3>Compute inverse module of k1</h3>
+    <button type="button" onclick="inverse()">Compute!</button>
+    <h3><div id= "inverse"></div></h3>
+    <br>
+
+    <h3>Decipher</h3>
+    <button type="button" onclick="decipher()">Decipher!</button>
+    <h3><div id="decipher"></div></h3>
+
+
+
+
+    <script>
+      function encrypt() {
+        var k1 = parseInt(document.getElementById('k1').value);
+        var k2 = parseInt(document.getElementById('k2').value);
+        var txt = document.getElementById('plaintxt').value;
+
+        var ciphertxt = "";
+
+        for(var i = 0; i < txt.length; i ++) {
+          var code = txt.charCodeAt(i) - 97;
+          var newCode = (k1 * code + k2) % 26 + 97;
+          var newLetter = String.fromCharCode(newCode);
+          ciphertxt += newLetter;
+        }
+        document.getElementById("ciphertxt").innerHTML = ciphertxt;
+      }
+
+      function inverse(){
+        var k1 = parseInt(document.getElementById('k1').value);
+        var inverse_k1 = 1;
+        // k1 belongs to 1 to 25
+        for (var i = 2; i <= 25; i += 1){
+          if ( (k1 * i) % 26 == 1 ) {
+            inverse_k1 = i;
+          }
+        }
+        document.getElementById("inverse").innerHTML = inverse_k1;
+      }
+
+      function decipher(){
+        var ciphertxt = document.getElementById('ciphertxt').innerHTML;
+        var inverse_k1 = parseInt(document.getElementById('inverse').innerHTML);
+        var k2 = parseInt(document.getElementById('k2').value);
+        var plaintxt = "";
+
+        for(var i = 0; i < ciphertxt.length; i ++){
+          var code = ciphertxt.charCodeAt(i) - 97;
+          var newcode = inverse_k1 * (code - k2 + 26) % 26 + 97;
+          var newletter = String.fromCharCode(newcode);
+          plaintxt += newletter;
+        }
+        document.getElementById("decipher").innerHTML = plaintxt;
+      }
+
+    </script>
+
+  </body>
+</html>
