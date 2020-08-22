@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Cloud Security Tutorial 3</h2>
+
+
+<h4>Implement Round 0 and Round 1 of Simplified AES</h4>
+
+plaintext: <input id="plaintext" value="1101011100101000"/><br/>
+key: <input id="key" value="0100101011110101"/><br/>
+<button type="button" onclick="getResult()">Get result!</button>
+
+
+<br/><br/>
+<h4>Round 0: Add Round Key</h4>
+plaintext xor key
+<div id="round_0_output"></div>
+
+<br/><br/>
+<h4>Round 1</h4>
+Substitution result: <div id="substitution_output"></div>
+
+<br/>
+Shift rows result: <div id="shift_rows_output"></div>
+
+<br/>
+Mix columns result: <div id="mix_columns_output"></div>
+
+<br/><br/><br/>
+
+<script>
+// Main function
+function getResult(){
+    // input must be 16-bit without space
+    // see example on Lecture week2 page 28 - 34
+    var plaintext = document.getElementById('plaintext').value;
+    var key = document.getElementById('key').value;
+
+    // Round 0 of Simplified AES
+    // compute plaintext xor key
+    var round_0_output = digits_xor_digits(plaintext, key);
+
+    // display Round 0 result on the website
+    document.getElementById('round_0_output').innerHTML = round_0_output;
+
+
+    // Round 1 of Simplified AES
+
+    // Step 1: substitute nibbles
+    // Step 1: substitute nibbles
+    // Step 1: substitute nibbles
+    // split the input as every 4-digit
+    var splits = round_0_output.split("");
+    var first_4_digits = splits[0]+splits[1]+splits[2]+splits[3];
+    var second_4_digits = splits[4]+splits[5]+splits[6]+splits[7];
+    var third_4_digits = splits[8]+splits[9]+splits[10]+splits[11];
+    var fourth_4_digits = splits[12]+splits[13]+splits[14]+splits[15];
+    // run substitution function for each 4-digits
+    first_4_digits = substitution(first_4_digits);
+    second_4_digits = substitution(second_4_digits);
+    third_4_digits = substitution(third_4_digits);
+    fourth_4_digits = substitution(fourth_4_digits);
+    // combine all as final substitution output
+    var substitution_output = first_4_digits+second_4_digits+third_4_digits+fourth_4_digits;
+
+    // display on the website
+    document.getElementById('substitution_output').innerHTML = substitution_output;
+
+
+    // Step 2: Shift rows
+    // Step 2: Shift rows
+    // Step 2: Shift rows
+    // run shift_rows function for all 16-digit
+    shift_rows_output = shift_rows(first_4_digits, second_4_digits, third_4_digits, fourth_4_digits);
+
+    // display on the website
+    document.getElementById('shift_rows_output').innerHTML = shift_rows_output;
+
+
+    // Step 3: Mix columns
+    // Step 3: Mix columns
+    // Step 3: Mix columns
+    // run mix columns function
+    // input is 4 parts as the 2*2 matrix as
+    //
+    //   S_0_0   S_0_1
+    //   S_1_0   S_1_1
+    //
+    var S_0_0 = first_4_digits;   var S_0_1 = third_4_digits;
+    var S_1_0 = second_4_digits;  var S_1_1 = fourth_4_digits;
+
+
+    // below is the example on the Lecture week2 page 34
+    //
+      var S_0_0 = "0010";   var S_0_1 = "1110";
+      var S_1_0 = "1110";   var S_1_1 = "1110";
+    //
+    var mix_columns_output = mix_columns(S_0_0, S_0_1, S_1_0, S_1_1);
+
+    // display on the website
+    document.getElementById('mix_columns_output').innerHTML = mix_columns_output;
+
+}
+
+
+
+// Here are all functions for Round 1 of Simplified AES
+// refer to Lecture week2 page 28
+
+
+// Substitute nibbles function
+// 4-bit input, 4-bit output,
+// according to the Lecture week2 page32 Substitution table
+function substitution(input){
+    var output = "0000";
+    if(input=="0000"){
+        output = "1001";
+    }
+    if(input=="0001"){
+        output = "0100";
+    }
+    if(input=="0010"){
+        output = "1010";
+    }
+    if(input=="0011"){
+        output = "1011";
+    }
+    if(input=="0100"){
+        output = "1101";
+    }
+    if(input=="0101"){
+        output = "0001";
+    }
+    if(input=="0110"){
+        output = "1000";
+    }
+    if(input=="0111"){
+        output = "0101";
+    }
+    if(input=="1000"){
+        output = "0110";
+    }
+    if(input=="1001"){
+        output = "0010";
+    }
+    if(input=="1010"){
+        output = "0000";
+    }
+    if(input=="1011"){
+        output = "0011";
+    }
+    if(input=="1100"){
+        output = "1100";
+    }
+    if(input=="1101"){
+        output = "1110";
+    }
+    if(input=="1110"){
+        output = "1111";
+    }
+    if(input=="1111"){
+        output = "0111";
+    }
+    return output;
+}
+
+
+
+// Shift rows function
+// according to Lecture week2 page 33 Shift Rows rules
+function shift_rows(first_4_digits, second_4_digits, third_4_digits, fourth_4_digits){
+    // S_0_0 = first_4_digits    S_0_1 = third_4_digits
+    // S_1_0 = second_4_digits   S_1_1 = fourth_4_digits
+    // swap S_1_0 and S_1_1 as
+    // S_0_0 = first_4_digits    S_0_1 = third_4_digits
+    // S_1_0 = fourth_4_digits   S_1_1 = second_4_digits
+    var output = first_4_digits + fourth_4_digits + third_4_digits + second_4_digits;
+    return output;
+}
+
+
+// Mix Columns function
+// input: 4 parts, each part 4-digit, totaly 16 bits as a 2*2 matrix
+// output: 16 bits as a 2*2 matrix
+function mix_columns(S_0_0,S_0_1,S_1_0,S_1_1){
+    // see example on Lecture week2 page 34
+    // a fixed 2*2 matrix as below
+    //   [1  4         [S_0_0  S_0_1      [S'_0_0  S'_0_1
+    //    4  1]   *     S_1_0  S_1_1]  =   S'_1_0  S'_1_1]
+    //
+    //
+    // convert S_1_0 (4-digit binary) from binary to decimal
+    var S_1_0_decimal = binary_to_decimal(S_1_0);
+    // compute 4 x S_1_0_decimal
+    var four_x_S_1_0_decimal = GF_multiply(4,S_1_0_decimal);
+    // convert it back to binary
+    four_x_S_1_0_binary = decimal_to_binary(four_x_S_1_0_decimal);
+
+    // compute S'_0_0 = S_0_0 XOR four_x_S_1_0_binary
+    // assume S'_0_0 as S00
+    var S00 = digits_xor_digits(S_0_0, four_x_S_1_0_binary);
+
+
+    // convert S_1_1 (4-digit binary) from binary to decimal
+    var S_1_1_decimal = binary_to_decimal(S_1_1);
+    // compute 4 x S_1_1_decimal
+    var four_x_S_1_1_decimal = GF_multiply(4,S_1_1_decimal);
+    // convert it back to binary
+    four_x_S_1_1_binary = decimal_to_binary(four_x_S_1_1_decimal);
+
+    // compute S'_0_1 = S_0_1 XOR four_x_S_1_1_binary
+    // assume S'_0_1 as S01
+    var S01 = digits_xor_digits(S_0_1, four_x_S_1_1_binary);
+
+
+    // convert S_0_0 (4-digit binary) from binary to decimal
+    var S_0_0_decimal = binary_to_decimal(S_0_0);
+    // compute 4 x S_0_0_decimal
+    var four_x_S_0_0_decimal = GF_multiply(4,S_0_0_decimal);
+    // convert it back to binary
+    four_x_S_0_0_binary = decimal_to_binary(four_x_S_0_0_decimal);
+
+    // compute S'_1_0 = S_1_0 XOR four_x_S_0_0_binary
+    // assume S'_1_0 as S10
+    var S10 = digits_xor_digits(S_1_0, four_x_S_0_0_binary);
+
+
+    // convert S_0_1 (4-digit binary) from binary to decimal
+    var S_0_1_decimal = binary_to_decimal(S_0_1);
+    // compute 4 x S_0_1_decimal
+    var four_x_S_0_1_decimal = GF_multiply(4,S_0_1_decimal);
+    // convert it back to binary
+    four_x_S_0_1_binary = decimal_to_binary(four_x_S_0_1_decimal);
+
+    // compute S'_1_1 = S_1_1 XOR 4_x_S_0_1_decimal
+    // assume S'_1_1 as S11
+    var S11 = digits_xor_digits(S_1_1, four_x_S_0_1_binary);
+
+    return S00 + S10 + S01 + S11;
+}
+
+
+// GF(16) multiplication function
+// refer to http://www.ee.unb.ca/cgi-bin/tervo/calc2.pl?num=4&den=1&f=m&p=4&d=1
+function GF_multiply(a, b){
+    var output = 0;
+    if(a==4&&b==1){
+        output = 4;
+    }
+    if(a==4&&b==2){
+        output = 8;
+    }
+    if(a==4&&b==3){
+        output = 12;
+    }
+    if(a==4&&b==4){
+        output = 3;
+    }
+    if(a==4&&b==5){
+        output = 7;
+    }
+    if(a==4&&b==6){
+        output = 11;
+    }
+    if(a==4&&b==7){
+        output = 15;
+    }
+    if(a==4&&b==8){
+        result = 6;
+    }
+    if(a==4&&b==9){
+        output = 2;
+    }
+    if(a==4&&b==10){
+        output = 14;
+    }
+    if(a==4&&b==11){
+        output = 10;
+    }
+    if(a==4&&b==12){
+        output = 5;
+    }
+    if(a==4&&b==13){
+        output = 1;
+    }
+    if(a==4&&b==14){
+        output = 13;
+    }
+    if(a==4&&b==15){
+        output = 9;
+    }
+    return output;
+}
+
+// compute xor
+// input: 2 binary with same number of bits
+// output: a binary
+function digits_xor_digits(binary1, binary2){
+
+    // make sure each binary as a string before split
+    var split_binary1 = binary1.toString().split("");
+    var split_binary2 = binary2.toString().split("");
+
+    var output = "";
+    for (i = 0; i < binary1.length; i++) {
+        // compute xor uisng ^
+        var xor_result = split_binary1[i]^split_binary2[i];
+        output = output + xor_result;
+    }
+    return output;
+}
+
+// convert a binary to decimal
+// input: binary
+// output: decimal
+function binary_to_decimal(binary){
+    var decimal = parseInt(binary, 2).toString(10);
+    return decimal;
+}
+
+// convert a decimal to binary
+// input: binary
+// output: decimal
+function decimal_to_binary(decimal){
+    var binary = parseInt(decimal, 10).toString(2);
+    return binary;
+}
+
+</script>
+
+</body>
+</html>
