@@ -40,9 +40,7 @@
         var n = parseInt(document.getElementById('n').value);
         var e = parseInt(document.getElementById('e').value);
         var plaintxt = document.getElementById('plaintxt').value;
-
         var cypherN = (Math.pow(plaintxt, e)) % n;
-
         document.getElementById('ciphertxt').innerHTML = "The cipher text is " + cypherN;
         document.getElementById('ciphertxt2').placeholder = cypherN;
       }
@@ -51,13 +49,10 @@
         var ciphertxt = document.getElementById('ciphertxt2').placeholder;
         var d = parseInt(document.getElementById('d').value);
         var n = parseInt(document.getElementById('n').value);
-
         var cipherN = parseInt(ciphertxt);
         var decipherN = (Math.pow(cipherN, d)) % n;
-
         document.getElementById('deciphered').innerHTML = decipherN;
        }
-
     </script>
   </body>
 </html>
