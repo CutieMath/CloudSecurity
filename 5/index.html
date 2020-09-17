@@ -1,27 +1,97 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-  </head>
+<html>
   <body>
     <h2>Tutorial 5</h2>
     <h2>DSS signature</h2>
 
+
     <h3>Pre-defined parameters</h3>
-    <label for="p">p: </label><input id="p" size="100" value="93186344784980379327844173784511558665386855920112643132746731261507638172561"><br />
-    <label for="q">q: </label><input id="q" size="100" value="2860746045115534081174829981436578008870289376689464094621435627"><br />
-    <label for="g">g: </label><input id="g" size="100" value="53974743592015271302148966481825584756593673836983901410136154937507399116198"><br />
+    p: <input id="p" size="100" value="93186344784980379327844173784511558665386855920112643132746731261507638172561"/><br/>
+    q: <input id="q" size="100" value="2860746045115534081174829981436578008870289376689464094621435627"/><br/>
+    g: <input id="g" size="100" value="53974743592015271302148966481825584756593673836983901410136154937507399116198"/><br/>
+
 
     <h3>Signature generation (by sender)</h3>
-    Enter a pseudorandom integer k (0 < k < q): <br>
-    k: <input id="k" placeholder="12345"><br>
-    <button type="button" onclick="calc_r()">Compute r</button>
+
+    Enter a ephemeral key (one-time key) k below:<br/>
+    k: <input id="k" value="12345"/><br/>
+    <button type="button" onclick="compute_r()">Compute r</button>
     r = (g^k mod p) mod q:
     <div id="r"></div>
 
+
+
     <script src="biginteger.js"></script>
-    <script type="text/javascript"></script>
+    <script type="text/javascript">
+        function compute_r(){
+
+            // get pre-defined parameters, p, q, g
+            var p = document.getElementById("p").value;
+            // convert string to big integer
+            p = bigInt(p);
+
+            var q = document.getElementById("q").value;
+            q = bigInt(q);
+
+            var g = document.getElementById("g").value;
+            g = bigInt(g);
+
+
+            // get user input one-time secret k
+            var k = document.getElementById("k").value;
+            // convert string to big integer
+            k = bigInt(k);
+
+            // compute r as
+            // step 1: g^k mod p
+            r = power_mod(g, k, p)
+            // step 2: (g^k mod p) mod q
+            r = mod(r, q);
+
+            // display r on the page
+            document.getElementById('r').innerHTML = r;
+        }
+
+
+        // ***************************************
+        // helper functions to compute big integer
+        // ***************************************
+
+        // compute a^b mod c
+        function power_mod(a, b, c) {
+          var result = a.modPow(b, c);
+          return result;
+        }
+
+        // compute a mod b
+        function mod(a, b) {
+          var result = a.mod(b);
+          if (result.isNegative())
+              result = result.add(b);
+          return result;
+        }
+
+        // compute (a + b) mod c
+        function add_mod(a, b, c) {
+          var result = a.add(b);
+          result = mod(result, c);
+          return result;
+        }
+
+        // compute (a * b) mod c
+        function multiply_mod(a, b, c){
+          var result = a.multiply(b);
+          result = mod(result, c);
+          return result;
+        }
+
+        // compute a^(-1) mod b
+        function inverse_mod(a, b) {
+          var result = a.mod(b);
+          result = result.modInv(b);
+          return result;
+        }
+    </script>
 
   </body>
 </html>
