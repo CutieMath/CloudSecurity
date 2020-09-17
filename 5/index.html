@@ -5,101 +5,23 @@
     <title></title>
   </head>
   <body>
-    <h2>Simple DSS program</h2>
-    <p>Parameters (p, q, g) are given</p>
+    <h2>Tutorial 5</h2>
+    <h2>DSS signature</h2>
 
-    <h3>Implement DSS key generation: </h3>
-    <label>Input key x (0 < x < q):</label>
-    <input id="x" type="text">
-    <br><br>
+    <h3>Pre-defined parameters</h3>
+    <label for="p">p: </label><input id="p" size="100" value="93186344784980379327844173784511558665386855920112643132746731261507638172561"><br />
+    <label for="q">q: </label><input id="q" size="100" value="2860746045115534081174829981436578008870289376689464094621435627"><br />
+    <label for="g">g: </label><input id="g" size="100" value="53974743592015271302148966481825584756593673836983901410136154937507399116198"><br />
 
-    <button type="button" onclick="calcPublic()">Calculate Public Key!</button>
-    <div id="y"></div><br>
+    <h3>Signature generation (by sender)</h3>
+    Enter a pseudorandom integer k (0 < k < q): <br>
+    k: <input id="k" placeholder="12345"><br>
+    <button type="button" onclick="calc_r()">Compute r</button>
+    r = (g^k mod p) mod q:
+    <div id="r"></div>
 
-    <hr>
-
-    <h3>Implement DSS signing: </h3>
-    <label>Input message (0 < m < q): </label>
-    <input id="m" type="text">
-    <br><br>
-
-    <button type="button" onclick="calcS()">Calculate Signature!</button>
-    <div id="s"></div><br>
-
-    <hr>
-
-    <h3>Verification:</h3>
-    <button type="button" onclick="verify()">Verify!</button>
-    <div id="v"></div>
-
-
-  <script>
-    function calcPublic() {
-      var p = 93186344784980379327844173784511558665386855920112643132746731261507638172561;
-      var q = 2860746045115534081174829981436578008870289376689464094621435627;
-      var g = 53974743592015271302148966481825584756593673836983901410136154937507399116198;
-      var x = document.getElementById('x').value;
-      var y = (Math.pow(g, x)) % p;
-      var y_large = toFixed(y);
-      document.getElementById('y').innerHTML = y_large;
-    }
-
-    function toFixed(x) {
-      if (Math.abs(x) < 1.0) {
-        var e = parseInt(x.toString().split('e-')[1]);
-        if (e) {
-          x *= Math.pow(10, e - 1);
-          x = '0.' + (new Array(e)).join('0') + x.toString().substring(2);
-        }
-      } else {
-        var e = parseInt(x.toString().split('+')[1]);
-        if (e > 20) {
-          e -= 20;
-          x /= Math.pow(10, e);
-          x += (new Array(e + 1)).join('0');
-        }
-      }
-      return x;
-    }
-
-    function calcS() {
-      var p = 93186344784980379327844173784511558665386855920112643132746731261507638172561;
-      var q = 2860746045115534081174829981436578008870289376689464094621435627;
-      var g = 53974743592015271302148966481825584756593673836983901410136154937507399116198;
-      var k = 123;
-      var m = document.getElementById('m').value;
-      var x = document.getElementById('x').value;
-
-
-      var r = (Math.pow(g, k) % p) % q;
-      var s = (Math.pow(k, -1) * (m + x * r)) % q;
-
-      document.getElementById('s').innerHTML = (r, s);
-    }
-
-    function verify(){
-      var p = 93186344784980379327844173784511558665386855920112643132746731261507638172561;
-      var q = 2860746045115534081174829981436578008870289376689464094621435627;
-      var g = 53974743592015271302148966481825584756593673836983901410136154937507399116198;
-      var k = 123;
-      var m = document.getElementById('m').value;
-      var x = document.getElementById('x').value;
-      var y = (Math.pow(g, x)) % p;
-      var r = (Math.pow(g, k) % p) % q;
-      var s = (Math.pow(k, -1) * (m + x * r)) % q;
-
-      var w = (Math.pow(s, -1)) % q;
-      var u1 = (m * w) % q;
-      var u2 = (r * m) % q;
-      var v = ((Math.pow(g, u1) * Math.pow(y, u2)) % p ) % q;
-
-      if (v === r) {
-          document.getElementById('v').innerHTML = "The signature is genuine!";
-      } else {
-        document.getElementById('v').innerHTML = "Ah oh the answer is not genuine.";
-      }
-    }
-  </script>
+    <script src="biginteger.js"></script>
+    <script type="text/javascript"></script>
 
   </body>
 </html>
