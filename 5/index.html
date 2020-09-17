@@ -13,29 +13,31 @@
 
     <h3>Signature generation (by sender)</h3>
 
-    Enter a ephemeral key (one-time key) k below:<br/>
-    k: <input id="k" value="12345"/><br/>
+    Enter an ephemeral key (one-time key) k below:<br/>
+    k: <input id="k" placeholder="12345"/><br/>
     <button type="button" onclick="compute_r()">Compute r</button>
     r = (g^k mod p) mod q:
     <div id="r"></div>
+
+    <br>
+    Enter private key x below: <br>
+    x: <input id="x" placeholder="56789"><br>
+    <button type="button" onclick="compute_y()">Compute y</button>
+    y = g^x mod p
+    <div id="y"></div>
 
 
 
     <script src="biginteger.js"></script>
     <script type="text/javascript">
         function compute_r(){
-
             // get pre-defined parameters, p, q, g
             var p = document.getElementById("p").value;
-            // convert string to big integer
-            p = bigInt(p);
-
             var q = document.getElementById("q").value;
-            q = bigInt(q);
-
             var g = document.getElementById("g").value;
+            p = bigInt(p);
+            q = bigInt(q);
             g = bigInt(g);
-
 
             // get user input one-time secret k
             var k = document.getElementById("k").value;
@@ -50,6 +52,18 @@
 
             // display r on the page
             document.getElementById('r').innerHTML = r;
+        }
+
+        function compute_y(){
+            var g = document.getElementById("g").value;
+            var x = document.getElementById("x").value;
+            var p = document.getElementById("p").value;
+            g = bigInt(g);
+            p = bigInt(p);
+            x = bigInt(x);
+
+            y = power_mod(g, x, p);
+            document.getElementById('y').innerHTML = y;
         }
 
 
