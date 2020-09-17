@@ -14,34 +14,68 @@
     <h3>Signature generation (by sender)</h3>
 
     Enter an ephemeral key (one-time key) k below:<br/>
-    k: <input id="k" placeholder="12345"/><br/>
+    k: <input id="k" value="12345"/><br/>
     <button type="button" onclick="compute_r()">Compute r</button>
     r = (g^k mod p) mod q:
     <div id="r"></div>
 
     <br>
     Enter private key x below: <br>
-    x: <input id="x" placeholder="56789"><br>
+    x: <input id="x" value="56789"><br>
     <button type="button" onclick="compute_y()">Compute y</button>
     y = g^x mod p
     <div id="y"></div>
 
+    <br>
+    Enter message m below: <br>
+    m: <input id="m" value="123456789"><br>
+    <button type="button" onclick="compute_s()">Compute s</button>
+    s = [(k ^ -1) * (m + xr)] mod q:
+    <div id="s"></div>
+
+    <br>
+    <h3>Signature verification (by receiver)</h3>
+    <button type="button" onclick="show_mrs()">Get message and signature</button><br>
+    m: <div id="m_res"></div>
+    r: <div id="r_res"></div>
+    s: <div id="s_res"></div>
+
+
+    <br>
+    <br>
+    <button type="button" onclick="calc_u1()">Compute u1</button>
+    u1 = (m * s^(-1)) mod q:
+    <div id="u1"></div>
+
+    <button type="button" onclick="calc_u2()">Compute u2</button>
+    u2 = (r * s^(-1)) mod q:
+    <div id="u2"></div>
+
+    <button type="button" onclick="calc_v()">Compute v</button>
+    v = (g^(u1) * y^(u2) mod p) mod q:
+    <div id="v"></div>
+
+    <br>
+    <button type="button" onclick="validate()">Verify!</button>
+    if v = r, the signature is verified!
+    <div id="verify"></div>
 
 
     <script src="biginteger.js"></script>
     <script type="text/javascript">
-        function compute_r(){
-            // get pre-defined parameters, p, q, g
-            var p = document.getElementById("p").value;
-            var q = document.getElementById("q").value;
-            var g = document.getElementById("g").value;
-            p = bigInt(p);
-            q = bigInt(q);
-            g = bigInt(g);
+        // get pre-defined parameters
+        // get user inputs
+        var p = document.getElementById("p").value;
+        p = bigInt(p);
+        var q = document.getElementById("q").value;
+        q = bigInt(q);
+        var g = document.getElementById("g").value;
+        g = bigInt(g);
 
+
+        function compute_r(){
             // get user input one-time secret k
             var k = document.getElementById("k").value;
-            // convert string to big integer
             k = bigInt(k);
 
             // compute r as
@@ -55,16 +89,95 @@
         }
 
         function compute_y(){
-            var g = document.getElementById("g").value;
             var x = document.getElementById("x").value;
-            var p = document.getElementById("p").value;
-            g = bigInt(g);
-            p = bigInt(p);
             x = bigInt(x);
-
+            g = bigInt(g);
             y = power_mod(g, x, p);
             document.getElementById('y').innerHTML = y;
         }
+
+        function compute_s(){
+            var k = document.getElementById("k").value;
+            k = bigInt(k);
+            var r = document.getElementById("r").innerHTML;
+            r = bigInt(r);
+            var m = document.getElementById("m").value;
+            m = bigInt(m);
+            var x = document.getElementById("x").value;
+            x = bigInt(x);
+
+            // compute s below:
+            // step 1: compute k^(-1) mod q
+            var inv_k = inverse_mod(k, q);
+            // step 2: compute (m+dr) mod q
+            var m_xr = add_mod(m, multiply_mod(x, r, q), q);
+            // step 3: multiply result from step 1 and 2
+            var s = multiply_mod(m_xr, inv_k, q);
+            // display s on the page
+            document.getElementById('s').innerHTML = s;
+        }
+
+        function show_mrs(){
+            var m = document.getElementById('m').value;
+            document.getElementById('m_res').innerHTML = m;
+            var r = document.getElementById('r').innerHTML;
+            document.getElementById('r_res').innerHTML = r;
+            var s = document.getElementById('s').innerHTML;
+            document.getElementById('s_res').innerHTML = s;
+        }
+
+        function calc_u1(){
+            // calculate w
+            s = document.getElementById('s_res').innerHTML;
+            s = bigInt(s);
+            m = document.getElementById('m_res').innerHTML;
+            m = bigInt(m);
+            var w = inverse_mod(s, q);
+            var u1 = multiply_mod(m, w, q);
+            document.getElementById('u1').innerHTML = u1;
+        }
+
+        function calc_u2(){
+          s = document.getElementById('s_res').innerHTML;
+          s = bigInt(s);
+          var w = inverse_mod(s, q);
+          r = document.getElementById('r_res').innerHTML;
+          r = bigInt(r);
+          var u2 = multiply_mod(r, w, q);
+          document.getElementById('u2').innerHTML = u2;
+        }
+
+        function calc_v(){
+          y = document.getElementById('y').innerHTML;
+          y = bigInt(y);
+          u1 = document.getElementById('u1').innerHTML;
+          u1 = bigInt(u1);
+          u2 = document.getElementById('u2').innerHTML;
+          u2 = bigInt(u2);
+
+          var g_u1 = power_mod(g, u1, p);
+          var y_u2 = power_mod(y, u2, p);
+          var sum = multiply_mod(g_u1, y_u2, p);
+          var v = mod(sum, q);
+          document.getElementById('v').innerHTML = v;
+        }
+
+        function validate(){
+          var v = document.getElementById('v').innerHTML;
+          //v = bigInt(v);
+          var r = document.getElementById('r').innerHTML;
+          //r = bigInt(r);
+          document.getElementById('verify').innerHTML = r;
+
+          if(v == r){
+            document.getElementById('verify').innerHTML = "The signature is verified yeeet!";
+          } else {
+            document.getElementById('verify').innerHTML = "The calculate is incorrect!!!";
+          }
+
+        }
+
+
 
 
         // ***************************************
