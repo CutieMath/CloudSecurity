@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Tute 6</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+
+    <h1>AES-128-ECB HASH</h1>
+
+    <div class="hash">
+        <h3>Hash</h3>
+        Plaintext: <input id="plaintext" size="50" type="text"><br>
+        Plaintext Hex: <input id="plainhex" size="50" type="text"><br>
+        Key: <input id="key" size="50" type="text" value="1234567890abcdef1234567890abcdef"><br>
+        <br>
+        <button type="button" name="button" onclick="hash()">AES Hash Plaintext</button>
+        <button type="button" name="button" onclick="hashHex()">AES Hash Hex</button>
+    </div>
+
+    <div class="result">
+        <h3>Hashed result:</h3>
+        <div id="result"></div>
+    </div>
+
+  </body>
+
+  <script src="aes.js"></script>
+  <script type="text/javascript">
+    function hash() {
+      var plaintext = document.getElementById('plaintext').value;
+      var key = document.getElementById('key').value;
+
+      var plainHex = toHex(plaintext);
+      // check length of plaintext to be modulo by 32
+      // If not, append 0
+      // 1 byte = 2 hex
+      // 16 byte = 32 hex
+      while(plainHex.length % 32 != 0){
+        plainHex += '' + '0';
+      }
+      // check length of key to be modulo by 32
+      while(key.length % 32 != 0){
+        plainHex += '' + '0';
+      }
+
+      // split plain hex to 16 bytes (32 hex letters) each
+      var block_array = split_16(plainHex, 32);
+      var m_xor_m = "00000000000000000000000000000000";
+      var c = "00000000000000000000000000000000";
+      var input_for_aes_encryption = "00000000000000000000000000000000";
+      for(i = 0; i < block_array.length; i ++){
+          m_xor_m = hex_xor_hex(m_xor_m, block_array[i]);
+          input_for_aes_encryption = hex_xor_hex(c, block_array[i]);
+          c = aes_ecb(input_for_aes_encryption, key);
+      }
+
+      var result = hex_xor_hex(m_xor_m, c);
+      result = aes_ecb(result, key);
+      document.getElementById('result').innerHTML = result;
+    }
+
+
+    function hashHex() {
+      var plainHex = document.getElementById('plainhex').value;
+      var key = document.getElementById('key').value;
+
+      // check length of plaintext to be modulo by 32
+      // If not, append 0
+      // 1 byte = 2 hex
+      // 16 byte = 32 hex
+      while(plainHex.length % 32 != 0){
+        plainHex += "" + "0";
+      }
+      //
+      // // check length of key to be modulo by 32
+      while(key.length % 32 != 0){
+        plainHex += "" + "0";
+      }
+      // split plain hex to 16 bytes (32 hex letters) each
+      var block_array = split_16(plainHex, 32);
+      var m_xor_m = "00000000000000000000000000000000";
+      var c = "00000000000000000000000000000000";
+      var input_for_aes_encryption = "00000000000000000000000000000000";
+      for( var i = 0; i < block_array.length; i ++){
+          m_xor_m = hex_xor_hex(m_xor_m, block_array[i]);
+          input_for_aes_encryption = hex_xor_hex(c, block_array[i]);
+          c = aes_ecb(input_for_aes_encryption, key);
+      }
+
+      var result = hex_xor_hex(m_xor_m, c);
+      result = aes_ecb(result, key);
+      document.getElementById('result').innerHTML = result;
+    }
+
+
+
+    // *********
+    //  Helper
+    // *********
+
+    function split_16(string, length){
+      var array = [];
+      var begin = 0;
+      var end = length;
+      while(end <= string.length) {
+        var slice = string.slice(begin, end);
+        array.push(slice);
+        begin = end;
+        end = end + length;
+      }
+      return array;
+    }
+
+    function hex_xor_hex(hex1, hex2){
+        hex1 = "0x"+hex1;
+        hex2 = "0x"+hex2;
+        return (BigInt(hex1)^BigInt(hex2)).toString(16);
+    }
+
+    function aes_ecb(plainHex, key){
+      // change to bytes
+      plainHex = aesjs.utils.hex.toBytes(plainHex);
+      key = aesjs.utils.hex.toBytes(key);
+      // AES ECB encryption
+      var AES_ECB = new aesjs.ModeOfOperation.ecb(key);
+      var encrypted_bytes = AES_ECB.encrypt(plainHex);
+      // Convert from bytes to hex
+      var cipherHex = aesjs.utils.hex.fromBytes(encrypted_bytes);
+      return cipherHex;
+    }
+
+    function toHex(str) {
+      var arr1 = [];
+      for (var n = 0, l = str.length; n < l; n++) {
+        var hex = Number(str.charCodeAt(n)).toString(16);
+        arr1.push(hex);
+      }
+      return arr1.join('');
+    }
+  </script>
+</html>
