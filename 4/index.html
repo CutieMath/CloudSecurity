@@ -10,24 +10,26 @@
   <li>(e * d) % phi(n) = 1</li>
 </ul>
 
-RSA public key for encryption:<br/>
+<!-- Encryption -->
+<hr>
+<h4>RSA Encryption:</h4>
+Use public key e <br>
 n: <input id="n" value="35"/><br/>
 e: <input id="e" value="5"/><br/>
-<br/>
-Plaintext (m) for encryption:<br/>
-m: <input id="m" value="5"/><br/>
+Plaintext m: <input id="m" value="5"/><br/>
 <button type="button" onclick="RSA_encrypt()">Encrypt!</button>
 <br/><br/>
-c = m^e mod n:
+Ciphertext c = m^e mod n:
 <div id="encrypted_value"></div>
 
-<br/>
+<!-- Decryption -->
+<br/><hr>
 <h4>RSA Decryption</h4>
-RSA private key for decryption:<br/>
+Use private key d <br>
 d: <input id="d" value="5"/><br/>
 <button type="button" onclick="RSA_decrypt()">Decrypt!</button>
 <br/><br/>
-Plaintext = c^e mod n:
+Plaintext m = c^e mod n:
 <div id="decrypted_value"></div>
 
 
