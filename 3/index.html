@@ -2,23 +2,27 @@
 <html>
 <body>
 
-<h2>Cloud Security Tutorial 3</h2>
+<h1>Tutorial 3. Simplified AES</h1>
 
+<p>Limitations</p>
+<ul>
+  <li>Plaintext and key must be 16 bits binary</li>
+  <li>Cannot take space</li>
+</ul>
 
-<h4>Implement Round 0 and Round 1 of Simplified AES</h4>
-
+<h3>Implement Round 0 and Round 1 of Simplified AES</h3>
 plaintext: <input id="plaintext" value="1101011100101000"/><br/>
 key: <input id="key" value="0100101011110101"/><br/>
 <button type="button" onclick="getResult()">Get result!</button>
 
 
 <br/><br/>
-<h4>Round 0: Add Round Key</h4>
+<h3>Round 0: Add Round Key</h3>
 plaintext xor key
 <div id="round_0_output"></div>
 
 <br/><br/>
-<h4>Round 1</h4>
+<h3>Round 1</h3>
 Substitution result: <div id="substitution_output"></div>
 
 <br/>

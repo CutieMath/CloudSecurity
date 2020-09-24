@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Tute 1</title>
+</head>
+
+<body>
+  <h1>Tutorial 1. Caesar Cipher</h1>
+  <p>Note: the system only take English letters</p>
+
+  <h3>Step 1: Retrieve input</h3>
+  <input id="plaintxt" type="text" name="plaintxt" placeholder="plain text">
+  <button type="button" onclick="getInput()">Get entered message!</button></button><br>
+  <div id="entered_html"></div>
+
+  <h3>Step 2: Split input into characters</h3>
+  <button type="button" onclick="split()">Split the message</button>
+  <div id="splited_html"></div>
+
+  <h3>Step 3: Convert characters to numbers</h3>
+  <button type="button" onclick="convertToNumber()">Conver the message</button>
+  <div id="converted"></div>
+
+  <h3>Strp 4: Encrypt when key is 3</h3>
+  <button type="button" onclick="encrypt()">Encrypt</button>
+  <div id="cypher"></div>
+
+  <script type="text/javascript">
+    function getInput() {
+      var message = document.getElementById('plaintxt').value;
+      // check if the input message are letters
+      if( message.toUpperCase() == message.toLowerCase() ) {
+        alert("Message must be letters");
+        return false;
+      }
+      document.getElementById('entered_html').innerHTML = "You have entered: " + message.toUpperCase();
+    }
+
+    function split() {
+      var plaintxt = document.getElementById('plaintxt').value;
+      var splited = plaintxt.toUpperCase().split("");
+      document.getElementById("splited_html").innerHTML = "Your splited message: " + splited;
+    }
+
+    function convertToNumber() {
+      var message = document.getElementById("plaintxt").value;
+      var messageUpper = message.toUpperCase();
+      var split = messageUpper.split("");
+      var converted = "";
+      for (i = 0; i < split.length; i++) {
+        converted += messageUpper.charCodeAt(i) - 65 + 3 + "</br>";
+      }
+      document.getElementById("converted").innerHTML = converted;
+    }
+
+    function encrypt() {
+      var rawMessage = document.getElementById('plaintxt').value;
+      var message = rawMessage.toUpperCase();
+      var split = message.split("");
+      var convert_result = "";
+      for (i = 0; i < split.length; i++) {
+        if (split[i] == "A") {
+          convert_result += "D";
+        }
+        if (split[i] == "B") {
+          convert_result += "E";
+        }
+        if (split[i] == "C") {
+          convert_result += "F";
+        }
+        if (split[i] == "D") {
+          convert_result += "G";
+        }
+        if (split[i] == "E") {
+          convert_result += "H";
+        }
+        if (split[i] == "F") {
+          convert_result += "I";
+        }
+        if (split[i] == "G") {
+          convert_result += "J";
+        }
+        if (split[i] == "H") {
+          convert_result += "K";
+        }
+        if (split[i] == "I") {
+          convert_result += "L";
+        }
+        if (split[i] == "J") {
+          convert_result += "M";
+        }
+        if (split[i] == "K") {
+          convert_result += "N";
+        }
+        if (split[i] == "L") {
+          convert_result += "O";
+        }
+        if (split[i] == "M") {
+          convert_result += "P";
+        }
+        if (split[i] == "N") {
+          convert_result += "Q";
+        }
+        if (split[i] == "O") {
+          convert_result += "R";
+        }
+        if (split[i] == "P") {
+          convert_result += "S";
+        }
+        if (split[i] == "Q") {
+          convert_result += "T";
+        }
+        if (split[i] == "R") {
+          convert_result += "U";
+        }
+        if (split[i] == "S") {
+          convert_result += "V";
+        }
+        if (split[i] == "T") {
+          convert_result += "W";
+        }
+        if (split[i] == "U") {
+          convert_result += "X";
+        }
+        if (split[i] == "V") {
+          convert_result += "Y";
+        }
+        if (split[i] == "W") {
+          convert_result += "Z";
+        }
+        if (split[i] == "X") {
+          convert_result += "A";
+        }
+        if (split[i] == "Y") {
+          convert_result += "B";
+        }
+        if (split[i] == "Z") {
+          convert_result += "C";
+        }
+        if (split[i] == " ") {
+          convert_result += " ";
+        }
+      }
+      document.getElementById("cypher").innerHTML = convert_result;
+    }
+  </script>
+</body>
+
+</html>

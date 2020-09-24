@@ -2,21 +2,21 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>Tute 4</title>
   </head>
   <body>
-    <h2>Cloud Security Tutorial 4: RSA encryption / decryption</h2>
+    <h1>Tutorial 4. RSA encryption and decryption</h1>
 
     <h3>Encryption (numbers only)</h3>
     <label>Input n (integer): </label>
-    <input id="n" type="text" placeholder="n">
+    <input id="n" type="text" value="35">
     <label>Input e (integer): </label>
-    <input id="e" type="text" placeholder="e">
+    <input id="e" type="text" value="5">
     <br>
 
-    <h3>Input plaintext</h3>
+    <h3>Input plaintext (numbers only)</h3>
     <label>Plaintext</label>
-    <input type="text" placeholder="plaintext" id="plaintxt">
+    <input type="text" value="5" id="plaintxt">
     <br><br>
 
     <button onclick="encrypt()" type="button">Encrypt!</button>
@@ -26,10 +26,10 @@
 
     <h3>Decryption</h3>
     <label>Input d:</label>
-    <input id="d" type="text" placeholder="d">
+    <input id="d" type="text" value="5">
     <br><br>
     <label>Input the cipher text:</label>
-    <input id="ciphertxt2" type="text" placeholder="ciphertext">
+    <input id="ciphertxt2" type="text" value="ciphertext">
     <br><br>
 
     <button onclick="decrypt()" type="button">Decrypt!</button>
@@ -42,11 +42,11 @@
         var plaintxt = document.getElementById('plaintxt').value;
         var cypherN = (Math.pow(plaintxt, e)) % n;
         document.getElementById('ciphertxt').innerHTML = "The cipher text is " + cypherN;
-        document.getElementById('ciphertxt2').placeholder = cypherN;
+        document.getElementById('ciphertxt2').value = cypherN;
       }
 
       function decrypt() {
-        var ciphertxt = document.getElementById('ciphertxt2').placeholder;
+        var ciphertxt = document.getElementById('ciphertxt2').value;
         var d = parseInt(document.getElementById('d').value);
         var n = parseInt(document.getElementById('n').value);
         var cipherN = parseInt(ciphertxt);
