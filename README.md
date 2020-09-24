@@ -16,7 +16,7 @@ https://cutiemath.github.io/CloudSecurity/4/index.html
 **Tute5. DSS**  
 https://cutiemath.github.io/CloudSecurity/5/index.html  
   
-**Tute6. AES-256-HASH**  
+**Tute6. AES-128-ECB HASH**  
 https://cutiemath.github.io/CloudSecurity/6/index.html  
   
 **Tute7. AES-256-CBC**  
