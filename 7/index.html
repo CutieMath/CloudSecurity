@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Tute 7</title>
+</head>
+
+<body>
+  <h1>AES-256-CBC Crypto System</h1>
+
+  <!-- Encrypt -->
+  <h3>Encryption</h3>
+  Plaintext: <input id="plaintext" type="text" value="I love cryptography!" size="100"><br>
+  key: <input id="key" type="text" value="This is a key" size="100"><br>
+  iv: <input id="iv" type="text" value="This is iv" size="100"><br><br>
+  <button type="button" onclick="encrypt()">Encrypt (Plaintext input)</button><br><br>
+
+  Plaintext Hex: <input id="plainHex" type="text" value="" size="100"><br>
+  Key Hex: <input id="keyHex" type="text" value="" size="100"><br>
+  iv Hex: <input id="ivHex" type="text" value="" size="100"><br><br>
+  <button type="button" onclick="encryptHex()">Encrypt (Hex input)</button><br><br>
+  Cipher text Hex: <div id="cipherHex"></div><br>
+  <hr>
+
+  <!-- Decrypt -->
+  <h3>Decryption</h3>
+  Cipher text Hex: <input id="cipherHex_de" type="text" size="100"><br>
+  key Hex: <input id="keyHex_de" type="text" value="" size="100"><br>
+  iv Hex: <input id="ivHex_de" type="text" value="" size="100"><br><br>
+  <button type="button" onclick="decrypt()">Decrypt!</button><br><br>
+  Decrypted message: <div id="decrypted"></div><br>
+  <hr>
+
+  <!-- Convert -->
+  <h3>Convert from hex to plaintext (For plaintext input only)</h3>
+  <button type="button" onclick="convert()">Convert to plaintext</button><br><br>
+  The message is: <div id="message"></div>
+
+
+</body>
+<!-- JS functions-->
+<script src="aes.js"></script>
+<script type="text/javascript">
+  function encrypt() {
+    // get inputs
+    var plaintext = document.getElementById('plaintext').value;
+    var key = document.getElementById('key').value;
+    var iv = document.getElementById('iv').value;
+
+    // change to hex
+    var plainHex = toHex(plaintext);
+    var keyHex = toHex(key);
+    var ivHex = toHex(iv);
+
+    // check length
+    // plaintext must be multiple of 16 bytes
+    // 1 byte = 2 hex digits
+    // 16 bytes = 32 hex digits
+    while (plainHex.length % 32 != 0) {
+      plainHex += "" + "0";
+    }
+    // key must be 256 bits
+    // 8 bits = 1 byte
+    // 256 bits = 32 bytes
+    // 1 byte = 2 hex digits
+    // 32 bytes = 64 hex digits
+    if (keyHex.length != 64) {
+      // if key size less than 64, pad 0
+      if (keyHex.length < 64) {
+        while (keyHex.length < 64) {
+          keyHex += '' + '0';
+        }
+        // if greater than 64, give alert
+      } else {
+        alert("Please give a key no more than 256 bits.");
+        document.getElementById('cipherHex').innerHTML = "Invalid key size."
+        return false;
+      };
+    };
+
+    // iv must be 128 bits
+    // 8 bits = 1 byte
+    // 128 bits = 16 bytes
+    // 1 byte = 2 hex digits
+    // 16 byte = 32 hex digits
+    if (ivHex.length != 32) {
+      // if key size less than 32, pad 0
+      if (ivHex.length < 32) {
+        while (ivHex.length < 32) {
+          ivHex += '' + '0';
+        }
+        // if greater than 64, give alert
+      } else {
+        alert("Please give an IV no more than 128 bits.");
+        document.getElementById('cipherHex').innerHTML = "Invalid IV size."
+        return false;
+      };
+    };
+
+    var result = aes_cbc(plainHex, keyHex, ivHex);
+    // show result
+    document.getElementById('cipherHex').innerHTML = result;
+    // provide hex for hex section
+    document.getElementById('plainHex').value = plainHex;
+    document.getElementById('keyHex').value = keyHex;
+    document.getElementById('ivHex').value = ivHex;
+    // next section
+    document.getElementById('cipherHex_de').value = result;
+    document.getElementById('keyHex_de').value = keyHex;
+    document.getElementById('ivHex_de').value = ivHex;
+  }
+
+  function encryptHex() {
+    var plainHex = document.getElementById('plainHex').value;
+    var keyHex = document.getElementById('keyHex').value;
+    var ivHex = document.getElementById('ivHex').value;
+    // plain hex length
+    while (plainHex.length % 32 != 0) {
+      plainHex += "" + "0";
+    }
+    // key hex length
+    if (keyHex.length != 64) {
+      if (keyHex.length < 64) {
+        while (keyHex.length < 64) {
+          keyHex += '' + '0';
+        }
+      } else {
+        alert("Please give a key no more than 256 bits.");
+        document.getElementById('cipherHex').innerHTML = "Invalid key size."
+        return false;
+      };
+    };
+    // iv hex length
+    if (ivHex.length != 32) {
+      if (ivHex.length < 32) {
+        while (ivHex.length < 32) {
+          ivHex += '' + '0';
+        }
+      } else {
+        alert("Please give an IV no more than 128 bits.");
+        document.getElementById('cipherHex').innerHTML = "Invalid IV size."
+        return false;
+      };
+    };
+    var result = aes_cbc(plainHex, keyHex, ivHex);
+    // show result
+    document.getElementById('cipherHex').innerHTML = result;
+    // next section
+    document.getElementById('cipherHex_de').value = result;
+    document.getElementById('keyHex_de').value = keyHex;
+    document.getElementById('ivHex_de').value = ivHex;
+  }
+
+  function decrypt() {
+    var cipherHex = document.getElementById('cipherHex_de').value;
+    var keyHex = document.getElementById('keyHex_de').value;
+    var ivHex = document.getElementById('ivHex_de').value;
+    var result = aes_cbc_de(cipherHex, keyHex, ivHex);
+    document.getElementById('decrypted').innerHTML = result;
+  }
+
+  function convert() {
+    var messageHex = document.getElementById('decrypted').innerHTML;
+    var message = hex_to_ascii(messageHex);
+    document.getElementById('message').innerHTML = message;
+  }
+
+  // ****************
+  // HELPER FUNCTIONS
+  // ****************
+  function aes_cbc(plainHex, keyHex, ivHex) {
+    plainHex = aesjs.utils.hex.toBytes(plainHex);
+    keyHex = aesjs.utils.hex.toBytes(keyHex);
+    if (ivHex == "" || ivHex == null) {
+      // The default initialization vector (must be 16 bytes)
+      ivHex = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36];
+    } else {
+      ivHex = aesjs.utils.hex.toBytes(ivHex);
+    }
+    var AES_CBC = new aesjs.ModeOfOperation.cbc(keyHex, ivHex);
+    var encrypted_bytes = AES_CBC.encrypt(plainHex);
+    var cipher = aesjs.utils.hex.fromBytes(encrypted_bytes);
+    return cipher;
+  }
+
+  function aes_cbc_de(cipherHex, keyHex, ivHex) {
+    cipherHex = aesjs.utils.hex.toBytes(cipherHex);
+    keyHex = aesjs.utils.hex.toBytes(keyHex);
+    if (ivHex == "" || ivHex == null) {
+      ivHex = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36];
+    } else {
+      ivHex = aesjs.utils.hex.toBytes(ivHex);
+    }
+    var AES_CBC = new aesjs.ModeOfOperation.cbc(keyHex, ivHex);
+    var decrypted_bytes = AES_CBC.decrypt(cipherHex);
+    var result = aesjs.utils.hex.fromBytes(decrypted_bytes);
+    return result;
+  }
+
+  function toHex(str) {
+    var arr1 = [];
+    for (var n = 0, l = str.length; n < l; n++) {
+      var hex = Number(str.charCodeAt(n)).toString(16);
+      arr1.push(hex);
+    }
+    return arr1.join('');
+  }
+
+  function hex_to_ascii(str1) {
+    var hex = str1.toString();
+    var str = '';
+    for (var n = 0; n < hex.length; n += 2) {
+      str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
+    }
+    return str;
+  }
+</script>
+
+</html>
