@@ -1,5 +1,5 @@
-# CloudSecurity  
-Cloud Security Tutorial Exercises  
+# Cloud Security  
+My favourite tutorial exercises  
   
 **Tute1. Ceaser Cipher**  
 https://cutiemath.github.io/CloudSecurity/1/index.html  
