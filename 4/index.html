@@ -1,64 +1,67 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Tute 4</title>
-  </head>
-  <body>
-    <h1>Tutorial 4. RSA encryption and decryption</h1>
+<html>
+<body>
 
-    <p>Rules</p>
-    <ul>
-      <li>gcd(e, phi(n)) = 1</li>
-      <li>(e * d) % phi(n) = 1 % phi(n)</li>
-    </ul>
+<h2>Tutorial 4. RSA Encryption and Decryption</h2>
 
-    <h3>Encryption (numbers only)</h3>
-    <label>Input n (integer): </label>
-    <input id="n" type="text" value="35">
-    <label>Input e (integer): </label>
-    <input id="e" type="text" value="5">
-    <br>
+<p>Rules</p>
+<ul>
+  <li>gcd(e, phi(n)) = 1</li>
+  <li>(e * d) % phi(n) = 1</li>
+</ul>
 
-    <h3>Input plaintext (numbers only)</h3>
-    <label>Plaintext</label>
-    <input type="text" value="5" id="plaintxt">
-    <br><br>
+RSA public key for encryption:<br/>
+n: <input id="n" value="35"/><br/>
+e: <input id="e" value="5"/><br/>
+<br/>
+Plaintext (m) for encryption:<br/>
+m: <input id="m" value="5"/><br/>
+<button type="button" onclick="RSA_encrypt()">Encrypt!</button>
+<br/><br/>
+c = m^e mod n:
+<div id="encrypted_value"></div>
 
-    <button onclick="encrypt()" type="button">Encrypt!</button>
-    <h3><div id="ciphertxt"></div></h3>
+<br/>
+<h4>RSA Decryption</h4>
+RSA private key for decryption:<br/>
+d: <input id="d" value="5"/><br/>
+<button type="button" onclick="RSA_decrypt()">Decrypt!</button>
+<br/><br/>
+Plaintext = c^e mod n:
+<div id="decrypted_value"></div>
 
-    <hr>
 
-    <h3>Decryption</h3>
-    <label>Input d:</label>
-    <input id="d" type="text" value="5">
-    <br><br>
-    <label>Input the cipher text:</label>
-    <input id="ciphertxt2" type="text" value="ciphertext">
-    <br><br>
+<script>
+// RSA encryption
+function RSA_encrypt(){
+    // get RSA public key
+    var n = document.getElementById("n").value;
+    var e = document.getElementById("e").value;
+    // get plaintext as m
+    var m = document.getElementById("m").value;
 
-    <button onclick="decrypt()" type="button">Decrypt!</button>
-    <h3><div id="deciphered"></div></h3>
+    // RSA encryption as
+    // m^e mod n
+    ciphertext = Math.pow(m, e) % n;
+    document.getElementById('encrypted_value').innerHTML = ciphertext;
+}
 
-    <script>
-      function encrypt() {
-        var n = parseInt(document.getElementById('n').value);
-        var e = parseInt(document.getElementById('e').value);
-        var plaintxt = document.getElementById('plaintxt').value;
-        var cypherN = (Math.pow(plaintxt, e)) % n;
-        document.getElementById('ciphertxt').innerHTML = "The cipher text is " + cypherN;
-        document.getElementById('ciphertxt2').value = cypherN;
-      }
+// RSA decryption
+function RSA_decrypt(){
+    // get RSA private key
+    var n = document.getElementById("n").value;
+    var d = document.getElementById("d").value;
+    // get ciphertext as c
+    var c = document.getElementById("encrypted_value").innerHTML;
 
-      function decrypt() {
-        var ciphertxt = document.getElementById('ciphertxt2').value;
-        var d = parseInt(document.getElementById('d').value);
-        var n = parseInt(document.getElementById('n').value);
-        var cipherN = parseInt(ciphertxt);
-        var decipherN = (Math.pow(cipherN, d)) % n;
-        document.getElementById('deciphered').innerHTML = decipherN;
-       }
-    </script>
-  </body>
+    // RSA decryption as
+    // c^d mod n
+    plaintext = Math.pow(c, d) % n;
+    document.getElementById('decrypted_value').innerHTML = plaintext;
+}
+
+
+</script>
+
+</body>
 </html>
