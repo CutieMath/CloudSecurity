@@ -9,7 +9,7 @@ https://cutiemath.github.io/CloudSecurity/2/index.html
 **Tute3. Simplified AES**  
 https://cutiemath.github.io/CloudSecurity/3/index.html  
   
-**Tute4. RSA (Need rework)**    
+**Tute4. RSA**    
 https://cutiemath.github.io/CloudSecurity/4/index.html  
   
 **Tute5. DSS**  
