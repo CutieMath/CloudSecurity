@@ -1,5 +1,4 @@
 # Cloud Security  
-2020 Semester 2 Cryptography 
   
 **Tute1. Ceaser Cipher**  
 https://cutiemath.github.io/CloudSecurity/1/index.html  
