@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Tute 9</title>
+  </head>
+  <body>
+    <h1>160 bits Random Number Generator</h1>
+
+    <button type="button" onclick="gen()">Generate</button>
+    <br><br>
+    BigInt Decimal:
+    <div id="decimal"></div>
+
+    <script src="biginteger.js"></script>
+    <script type="text/javascript">
+      function gen(){
+        var random = "";
+        for(i = 0; i < 160; i ++){
+          random += Math.floor(Math.random() * 2);
+        }
+        console.log(random);
+        // convert binary to decimal
+        var result = bigInt(random, 2);
+        document.getElementById('decimal').innerHTML = result;
+      }
+    </script>
+
+  </body>
+</html>
