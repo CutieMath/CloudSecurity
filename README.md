@@ -20,3 +20,6 @@ https://cutiemath.github.io/CloudSecurity/6/index.html
   
 **Tute7. AES-256-CBC**  
 https://cutiemath.github.io/CloudSecurity/7/index.html  
+  
+**Tute9. Random Number Generator**  
+https://cutiemath.github.io/CloudSecurity/9/index.html  
