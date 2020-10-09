@@ -26,7 +26,7 @@ https://cutiemath.github.io/CloudSecurity/9/index.html
   
 **Assignment II Programming Part**  
 1. AES-256-ECB  
-https://cutiemath.github.io/CloudSecurity/assn2-AES-256-ECB/index.html   
+https://cutiemath.github.io/CloudSecurity/assn2-AES-256-ECB/AES.html   
   
 2. Diffie-Hellmen Key exchange  
 https://cutiemath.github.io/CloudSecurity/assn2-Diffie-Hellmen/index.html   
