@@ -23,3 +23,11 @@ https://cutiemath.github.io/CloudSecurity/7/index.html
   
 **Tute9. Random Number Generator**  
 https://cutiemath.github.io/CloudSecurity/9/index.html  
+  
+**Assignment II Programming Part**  
+1. AES-ECB-256  
+https://cutiemath.github.io/CloudSecurity/assn2-AES-ECB-256/index.html   
+  
+2. Diffie-Hellmen Key exchange  
+https://cutiemath.github.io/CloudSecurity/assn2-Diffie-Hellmen/index.html   
+ 
