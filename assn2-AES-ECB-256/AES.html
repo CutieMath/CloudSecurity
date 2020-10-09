@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>AES-ECB-256</title>
+</head>
+
+<body>
+  <h1>AES-ECB-256 Cryptosystem</h1>
+  Note: The system can take both plaintext and hex code. But need to press the button accordingly. Will implement radio button if have time.
+  <br>While taking the plaintext as input, the system will convert and print hex code as well.
+
+  <!-- Encryption -->
+  <hr>
+  <h3>AES Encryption (ECB mode)</h3>
+  Plaintext: <input size="100" type="text" id="plaintext" value="YuXinYe,s3737548@student.rmit.edu.au,password"><br>
+  Key: <input size="100" type="text" id="key" value="s3737548@student.rmit.edu.au"><br><br>
+  <button type="button" onclick="encrypt()">Encrypt! (Plaintext Input)</button><br><br>
+  Plaintext Hex: <input size="100" id="plainHex"><br>
+  Key Hex: <input size="100" id="keyHex"><br><br>
+  <button type="button" onclick="encryptHex()">Encrypt! (Hex Input)</button><br><br>
+  Encrypted Result: <div id="cipherHex"></div>
+  <br>
+
+
+  <!-- Decryption -->
+  <hr>
+  <h3>AES decryption (ECB mode)</h3>
+  Ciphertext: <input size="100" type="text" id="cipher_decrypt"><br>
+  Key: <input size="100" type="text" id="key_decypt"><br><br>
+  <button type="button" onclick="decrypt()">Decrypt!</button><br><br>
+  Decrypted Result: <div id="resultHex"></div>
+  <br>
+
+
+  <!-- Convert hex to plaintext -->
+  <hr>
+  <h3>Convert Hex result to plaintext (Applicable for plaintext input)</h3>
+  <button type="button" onclick="convert()">Convert to plaintext</button><br><br>
+  Plaintext result: <div id="check"></div>
+
+
+  <!-- Check results -->
+  <hr>
+  <h3>Check if decrypted result is the same with plain text</h3>
+  Result: <br>
+  <div id="check_result"></div>
+
+
+</body>
+<!-- JS functions  -->
+<script type="text/javascript" src="aes.js"></script>
+<script type="text/javascript">
+  function encrypt() {
+    var plaintext = document.getElementById('plaintext').value;
+    // Convert to HEX
+    var plainHex = convertToHex(plaintext);
+    // Check if plaintext is multiple of 16 bytes, if not, append 0 until its modulo 32 is 0
+    // 1 byte = 2 hex digits
+    // 16 bytes = 32 hex digits
+    while (plainHex.length % 32 != 0) {
+      plainHex += '' + '0';
+    }
+    var key = document.getElementById('key').value;
+    var keyHex = convertToHex(key);
+    // Check if key is 256 bits, if less than 256, append 0 at the end
+    // If greater than 256, show alert
+    // 256 bits = 32 bytes
+    // 1 byte = 2 hex digits
+    // 32 bytes = 64 hex digits
+    if (keyHex.length != 64) {
+      // if key size is less than 64, append 0 to the end of the hex until it's 64 hex
+      // else give alert and terminate
+      if (keyHex.length < 64) {
+        while (keyHex.length < 64) {
+          keyHex += '' + '0';
+        }
+      } else {
+        alert("Please give a key with 256 bits.");
+        document.getElementById('cipherHex').innerHTML = "Invalid key size."
+        return false;
+      };
+    };
+    var cipher_hex = aes_ecb_en(plainHex, keyHex);
+    // display Hex codes
+    document.getElementById('plainHex').value = plainHex;
+    document.getElementById('keyHex').value = keyHex;
+    // display result
+    document.getElementById('cipherHex').innerHTML = cipher_hex;
+    // display ciphertext and key in next section (hex)
+    document.getElementById('cipher_decrypt').value = cipher_hex;
+    document.getElementById('key_decypt').value = keyHex;
+  }
+
+  function encryptHex() {
+    var plainHex = document.getElementById('plainHex').value;
+    var keyHex = document.getElementById('keyHex').value;
+    // adjust size for plain hex
+    while (plainHex.length % 32 != 0) {
+      plainHex += '' + '0';
+    }
+    // adjust size for key hex
+    if (keyHex.length != 64) {
+      // if key size less than 64, pad 0
+      if (keyHex.length < 64) {
+        while (keyHex.length < 64) {
+          keyHex += '' + '0';
+        }
+        // if greater than 64, give alert
+      } else {
+        alert("Please give a key with 256 bits.");
+        document.getElementById('cipherHex').innerHTML = "Invalid key size."
+        return false;
+      };
+    };
+    var cipher_hex = aes_ecb_en(plainHex, keyHex);
+    // display result
+    document.getElementById('cipherHex').innerHTML = cipher_hex;
+    // display ciphertext and key in next section (hex)
+    document.getElementById('cipher_decrypt').value = cipher_hex;
+    document.getElementById('key_decypt').value = keyHex;
+  }
+
+  function decrypt() {
+    var plainHex = document.getElementById('plainHex').value;
+    var cipherHex = document.getElementById('cipher_decrypt').value;
+    var keyHex = document.getElementById('key_decypt').value;
+    var plainHex_result = aes_ecb_de(cipherHex, keyHex);
+    document.getElementById('resultHex').innerHTML = plainHex_result;
+
+    // Check result
+    if (plainHex_result == plainHex){
+      document.getElementById('check_result').innerHTML = "Decrypted result match plain text!"
+    } else {
+      alert("Decrypted result was wrong. Check again.");
+      return false;
+    }
+  }
+
+  function convert() {
+    var hex = document.getElementById('resultHex').innerHTML;
+    var result = hex_to_ascii(hex);
+    document.getElementById('check').innerHTML = result;
+  }
+
+  // ****************
+  // Helper Functions
+  // ****************
+
+  // Convert plaintext to hex
+  function convertToHex(str) {
+    var hex = '';
+    for (var i = 0; i < str.length; i++) {
+      hex += '' + str.charCodeAt(i).toString(16);
+    }
+    return hex;
+  }
+
+  // Use aes.js library for AES ECB Encryption
+  function aes_ecb_en(plainHex, keyHex) {
+    // convert hex to bytes
+    plainHex = aesjs.utils.hex.toBytes(plainHex);
+    keyHex = aesjs.utils.hex.toBytes(keyHex);
+
+    var AES_ECB = new aesjs.ModeOfOperation.ecb(keyHex);
+    var result_bytes = AES_ECB.encrypt(plainHex);
+
+    // convert result back to hex
+    var cipher = aesjs.utils.hex.fromBytes(result_bytes);
+    return cipher;
+  }
+
+  // Use aes.js library for AES ECB Decryption
+  function aes_ecb_de(cipherHex, keyHex) {
+    // convert hex to bytes
+    cipherHex = aesjs.utils.hex.toBytes(cipherHex);
+    keyHex = aesjs.utils.hex.toBytes(keyHex);
+
+    var AES_ECB = new aesjs.ModeOfOperation.ecb(keyHex);
+    var result_bytes = AES_ECB.decrypt(cipherHex);
+
+    // convert from bytes to hex
+    var plainHex_result = aesjs.utils.hex.fromBytes(result_bytes);
+    return plainHex_result;
+  }
+
+  function hex_to_ascii(str1) {
+    var hex = str1.toString();
+    var str = '';
+    for (var n = 0; n < hex.length; n += 2) {
+      str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
+    }
+    return str;
+  }
+</script>
+
+</html>

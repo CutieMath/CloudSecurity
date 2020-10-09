@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Diffie-Hellman</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <h1>Diffie-Hellman Key Exchange Protocol</h1>
+  Given parameters: <br><br>
+  p = <input id="p" size=100 type="text"
+    value="178011905478542266528237562450159990145232156369120674273274450314442865788737020770612695252123463079567156784778466449970650770920727857050009668388144034129745221171818506047231150039301079959358067395348717066319802262019714966524135060945913707594956514672855690606794135837542707371727429551343320695239"><br>
+  g = <input id="g" size=100 type="text"
+    value="174068207532402095185811980123523436538604490794561350978495831040599953488455823147851597408940950725307797094915759492368300574252438761037084473467180148876118103083043754985190983472601550494691329488083395492313850000361646482644608492304078721818959999056496097769368017749273708962006689187956744210730">
+
+  <!-- 160-bit random number generator -->
+  <h3>Alice and Bob generate 160-bit random numbers as secret keys</h3>
+  Alice's random number "A" as secret key = <input size=60 type="text" id="random_A" value=""><br>
+  Bob's random number "B" as secret key = <input size=60 type="text" id="random_B" value=""><br><br>
+  <button type="button" onclick="random_gen()">Generate!</button>
+
+  <!-- Public keys a and b computer-->
+  <h3>Alice and Bob computes public keys a and b</h3>
+  a = g<sup>A</sup>(mod p) = <br><textarea id="a" rows="5" cols="60"></textarea><br>
+  b = g<sup>B</sup>(mod p) = <br><textarea id="b" rows="5" cols="60"></textarea><br><br>
+  <button type="button" onclick="calc_ab()">Compute!</button>
+
+  <!-- Display secret key -->
+  <h3>Alice and Bob's key exchange</h3>
+    <div class="row">
+      <div class="col-1-of-2">
+        Alice: <br>
+        Use Bob's public key b and random number A to calculate key: b<sup>A</sup>
+        <textarea id="alice_calc" rows="6" cols="60"></textarea><br>
+        Use g<sup>BA</sup> to check the key calculated above <br>
+        <textarea id="alice_k" rows="6" cols="60"></textarea><br>
+        <button type="button" onclick="calc_secret_a()">Compute!</button>
+      </div>
+      <div class="col-1-of-2">
+        Bob: <br>
+        Use Alice's public key a and random number B to calculate key: a<sup>B</sup>
+        <textarea id="bob_calc" rows="6" cols="60"></textarea><br>
+        Use g<sup>AB</sup> to check the key calculated above <br>
+        <textarea id="bob_k" rows="6" cols="60"></textarea><br>
+        <button type="button" onclick="calc_secret_b()">Compute!</button>
+      </div>
+    </div>
+
+    <h3>As Alice and Bob can compute the same key, the key is now successfully exchanged between two parties.</h3>
+
+    <!-- Answer Question 3 -->
+    <hr>
+    <h3>Answer Question 3</h3>
+    Alice's key pair (A, g<sup>A</sup>(mod p)), also denoted as (A, a):<br>
+    <textarea id="alice_key_pair" rows="6" cols="80"></textarea><br>
+    Bob's key pair (B, g<sup>B</sup>(mod p)), also denoted as (B, b):<br>
+    <textarea id="bob_key_pair" rows="6" cols="80"></textarea><br>
+
+
+</body>
+<!-- JS functions -->
+<script src="biginteger.js"></script>
+<script type="text/javascript">
+  // given parameters
+  var p = document.getElementById('p').value;
+  var g = document.getElementById('g').value;
+  p = bigInt(p);
+  g = bigInt(g);
+
+  function random_gen() {
+    var ran_A = "";
+    var ran_B = "";
+    // generate 160-bit of 0 and 1
+    for (i = 0; i < 160; i++) {
+      ran_A += Math.floor(Math.random() * 2);
+    }
+    for (i = 0; i < 160; i++) {
+      ran_B += Math.floor(Math.random() * 2);
+    }
+    // convert binary to integer
+    var random_big_a = bigInt(ran_A, 2);
+    var random_big_b = bigInt(ran_B, 2);
+    document.getElementById('random_A').value = random_big_a;
+    document.getElementById('random_B').value = random_big_b;
+  }
+
+  function calc_ab() {
+    var ran_A = document.getElementById('random_A').value;
+    var ran_B = document.getElementById('random_B').value;
+    // convert all to biginteger
+    ran_A = bigInt(ran_A);
+    ran_B = bigInt(ran_B);
+    // compute
+    var a = power_mod(g, ran_A, p);
+    var b = power_mod(g, ran_B, p);
+    // display
+    document.getElementById('a').value = a;
+    document.getElementById('b').value = b;
+    // display Alice and Bob's key pair
+    document.getElementById('alice_key_pair').value = "(" + ran_A.toLocaleString() + ", " + a.toLocaleString() + ")";
+    document.getElementById('bob_key_pair').value = "(" + ran_B.toLocaleString() + ", " +  b.toLocaleString() + ")";
+  }
+
+  function calc_secret_a(){
+    var ran_A = document.getElementById('random_A').value;
+    var ran_B = document.getElementById('random_B').value;
+    // get Bob's public key
+    var b = document.getElementById('b').value;
+    ran_A = bigInt(ran_A);
+    ran_B = bigInt(ran_B);
+    b = bigInt(b);
+    // use Bob's public key and Alice's random number to calculate Alice's key
+    var calc = power_mod(b, ran_A, p);
+    // to verify if the key is generate correctly
+    var multiple = ran_A.multiply(ran_B);
+    var k = power_mod(g, multiple, p);
+    document.getElementById('alice_k').value = k;
+    document.getElementById('alice_calc').value = calc;
+  }
+
+  function calc_secret_b(){
+    var ran_A = document.getElementById('random_A').value;
+    var ran_B = document.getElementById('random_B').value;
+    // get Alice's public key
+    var a = document.getElementById('a').value;
+    ran_A = bigInt(ran_A);
+    ran_B = bigInt(ran_B);
+    a = bigInt(a);
+    // calculate Bob's key
+    var calc = power_mod(a, ran_B, p);
+    // verify
+    var multiple = ran_A.multiply(ran_B);
+    var k = power_mod(g, multiple, p);
+    document.getElementById('bob_k').value = k;
+    document.getElementById('bob_calc').value = calc;
+  }
+
+  // ****************
+  // HELPER FUNCTIONS
+  // ****************
+
+  // compute a^b mod c
+  function power_mod(a, b, c) {
+    var result = a.modPow(b, c);
+    return result;
+  }
+
+  // compute a mod b
+  function mod(a, b) {
+    var result = a.mod(b);
+    if (result.isNegative())
+      result = result.add(b);
+    return result;
+  }
+
+  // compute (a + b) mod c
+  function add_mod(a, b, c) {
+    var result = a.add(b);
+    result = mod(result, c);
+    return result;
+  }
+
+  // compute (a * b) mod c
+  function multiply_mod(a, b, c) {
+    var result = a.multiply(b);
+    result = mod(result, c);
+    return result;
+  }
+
+  // compute a^(-1) mod b
+  function inverse_mod(a, b) {
+    var result = a.mod(b);
+    result = result.modInv(b);
+    return result;
+  }
+</script>
+
+</html>
