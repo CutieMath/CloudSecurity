@@ -7,12 +7,136 @@
   <body>
 
     <h2>(2, 4) Shamir Secret Sharing Scheme</h2>
-    <h4>Give parameters: </h4>
+    <h4>Given parameters </h4>
     degree = t - 1 = 2 - 1 = 1 <br>
-    secret s: <input type="text" id="secret" value=""> <br>
-    constant b: <input type="text" id="b" value=""> <br>
+    secret key s: <input type="text" id="secret" value="9"> <br>
+    coefficient b: <input type="text" id="b" value="13"> <br>
     p: <input type="text" id="p" size="100" value="105403522472819073296206861573464063409385315496387315745495868303743633749793">
+
+    <!-- Polynomial equation -->
+    <h4>Get Polynomial equation</h4>
+    Polynomial equation: f(x) = bx + s (mod p): <br>
+    f(x) = <div id="Polynomial_equation"></div>
+    <button type="button" onclick="getPoly()">get Plynomial equation</button>
+
+    <!-- Compute points according to question -->
+    <h4>Compute 4 points as (2, 4) Shamir Scheme</h4>
+    When x = 1, 2, 3, 4
+    <div id="one"></div>
+    <div id="two"></div>
+    <div id="three"></div>
+    <div id="four"></div>
+    <button type="button" onclick="calcPoints()">Compute points</button>
+
+    <!-- select two points to recover the keys -->
+    <h4>Key recover</h4>
+    Select two points from above, and enter the x, y value below: <br>
+    point 1 <br>
+    x1: <input type="text" id="x1"><br>
+    y1: <input type="text" id="y1"><br>
+    point 2 <br>
+    x2: <input type="text" id="x2"><br>
+    y2: <input type="text" id="y2"><br>
+    <button type="button" onclick="recover()">Recover</button><br>
+    Recovered key: <div id="recovered_result"></div>
 
 
   </body>
+  <!-- JS functions  -->
+  <script src="biginteger.js"></script>
+  <script type="text/javascript">
+    var p = document.getElementById('p').value;
+    p = bigInt(p);
+
+    function getPoly(){
+      var s = document.getElementById('secret').value;
+      var b = document.getElementById('b').value;
+      document.getElementById('Polynomial_equation').innerHTML = b + " x + " + s + " mod " + p.toLocaleString();
+    }
+
+    function calcPoints(){
+      var one = calc_poly("1");
+      var two = calc_poly("2");
+      var three = calc_poly("3");
+      var four = calc_poly("4");
+      document.getElementById('one').innerHTML = "( 1, " + one + " )";
+      document.getElementById('two').innerHTML = "( 2, " + two + " )";
+      document.getElementById('three').innerHTML = "( 3, " + three + " )";
+      document.getElementById('four').innerHTML = "( 4, " + four + " )";
+    }
+
+    function calc_poly(x){
+      x = bigInt(x);
+      var s = document.getElementById('secret').value;
+      s = bigInt(s);
+      var b = document.getElementById('b').value;
+      b = bigInt(b);
+      return add_mod(multiply_mod(b, x, p), s, p);
+    }
+
+    function recover(){
+      var x1 = document.getElementById('x1').value;
+      x1 = bigInt(x1);
+      var y1 = document.getElementById('y1').value;
+      y1 = bigInt(y1);
+      var x2 = document.getElementById('x2').value;
+      x2 = bigInt(x2);
+      var y2 = document.getElementById('y2').value;
+      y2 = bigInt(y2);
+
+      // use lagrange interpolation formular
+      var first_part = multiply_mod(y1, multiply_mod(x2, inverse_mod(sub_mod(x2, x1, p), p), p), p);
+      var second_part = multiply_mod(y2, multiply_mod(x1, inverse_mod(sub_mod(x1, x2, p), p), p), p);
+      var recovered_secret = add_mod(first_part, second_part, p);
+      console.log(recovered_secret);
+      document.getElementById('recovered_result').innerHTML = recovered_secret;
+
+    }
+
+    // ***************************************
+    // helper functions to compute big integer
+    // ***************************************
+
+    // compute a^b mod c
+    function power_mod(a, b, c) {
+      var result = a.modPow(b, c);
+      return result;
+    }
+
+    // compute a mod b
+    function mod(a, b) {
+      var result = a.mod(b);
+      if (result.isNegative())
+          result = result.add(b);
+      return result;
+    }
+
+    // compute (a + b) mod c
+    function add_mod(a, b, c) {
+      var result = a.add(b);
+      result = mod(result, c);
+      return result;
+    }
+
+    // compute (a-b) mod c
+    function sub_mod(a, b, c){
+        var result = a.subtract(b);
+        result = mod(result, c);
+        return result;
+    }
+
+    // compute (a * b) mod c
+    function multiply_mod(a, b, c){
+      var result = a.multiply(b);
+      result = mod(result, c);
+      return result;
+    }
+
+    // compute a^(-1) mod b
+    function inverse_mod(a, b) {
+      var result = a.mod(b);
+      result = result.modInv(b);
+      return result;
+    }
+  </script>
 </html>
