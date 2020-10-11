@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>MD5</title>
+  </head>
+  <body>
+    <h2>MD5 Hash Function</h2>
+    Message: <input type="text" id="message"> <br> <br>
+    <button type="button" onclick="hash()">Hash!</button><br><br>
+    MD5 Hash Value:
+    <div id="hash_result"></div>
+
+  </body>
+  <script src="crypto-js.min.js"></script>
+  <script type="text/javascript">
+    function hash(){
+        var message = document.getElementById("message").value;
+        var hash = CryptoJS.MD5(message);
+        document.getElementById('hash_result').innerHTML = hash;
+    }
+  </script>
+</html>
