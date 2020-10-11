@@ -24,6 +24,12 @@ https://cutiemath.github.io/CloudSecurity/7/index.html
 **Tute9. Random Number Generator**  
 https://cutiemath.github.io/CloudSecurity/9/index.html  
   
+**Tute10. Shamir Secret Key Sharing Scheme**  
+https://cutiemath.github.io/CloudSecurity/10/Shamir/index.html  
+  
+**Tute10. MD5**  
+https://cutiemath.github.io/CloudSecurity/10/MD5/index.html  
+  
 **Assignment II Programming Part**  
 1. AES-256-ECB  
 https://cutiemath.github.io/CloudSecurity/assn2-AES-256-ECB/AES.html   
