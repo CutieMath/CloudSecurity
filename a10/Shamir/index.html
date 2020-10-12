@@ -16,7 +16,7 @@
     <!-- Polynomial equation -->
     <h4>Get Polynomial equation</h4>
     Polynomial equation: f(x) = bx + s (mod p): <br>
-    f(x) = <div id="Polynomial_equation"></div>
+    <div id="Polynomial_equation"></div>
     <button type="button" onclick="getPoly()">get Plynomial equation</button>
 
     <!-- Compute points according to question -->
@@ -51,7 +51,7 @@
     function getPoly(){
       var s = document.getElementById('secret').value;
       var b = document.getElementById('b').value;
-      document.getElementById('Polynomial_equation').innerHTML = b + " x + " + s + " mod " + p.toLocaleString();
+      document.getElementById('Polynomial_equation').innerHTML = "f(x) = " + b + " x + " + s + " mod " + p.toLocaleString();
     }
 
     function calcPoints(){
