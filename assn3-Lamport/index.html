@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Lamport Password</title>
+  </head>
+  <body>
+    <h2>Lamport password algorithm</h2>
+
+    <!-- original password -->
+    <h4>Password to hash</h4>
+    <input size="40" type="text" id="password_to_hash" value="s3737548@student.rmit.edu.au"><br><br>
+    <button type="button" onclick="generate()">Generate!</button> <br>
+    <h4>32 one-time Lamport passwords: </h4>
+    <div id="result"></div>
+
+  </body>
+  <!-- JS functions  -->
+  <script src="crypto-js.min.js"></script>
+  <script type="text/javascript">
+    function generate(){
+      var message = document.getElementById('password_to_hash').value;
+      var hashValue = CryptoJS.MD5(message);
+      var result = generateMore(hashValue);
+      document.getElementById('result').innerHTML = "PW 32: " + message + "<br>PW 31: " + hashValue + "</br>" + result;
+    }
+
+    function generateMore(password){
+      var passwordsString = "";
+      for(var i = 30; i >= 0; i --){
+          var newPassword = CryptoJS.MD5(password);
+          password = newPassword;
+          passwordsString += "PW " + i + ": " + password + "<br>";
+      }
+      return passwordsString;
+    }
+
+
+  </script>
+</html>
