@@ -36,4 +36,11 @@ https://cutiemath.github.io/CloudSecurity/assn2-AES-256-ECB/AES.html
   
 2. Diffie-Hellmen Key exchange  
 https://cutiemath.github.io/CloudSecurity/assn2-Diffie-Hellmen/index.html   
+  
+**Assignment III Programming Part**  
+1. Shamir Secret Key Sharing  
+https://cutiemath.github.io/CloudSecurity/assn3-Shamir/index.html   
+  
+2. Lamport one-time password  
+https://cutiemath.github.io/CloudSecurity/assn3-Lamport/index.html   
  
